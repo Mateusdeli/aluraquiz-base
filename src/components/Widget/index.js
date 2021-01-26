@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const Widget = styled.div`
   margin-top: 24px;
@@ -20,7 +20,7 @@ const Widget = styled.div`
     font-weight: 400;
     line-height: 1;
   }
-`
+`;
 
 Widget.Header = styled.div`
   display: flex;
@@ -32,7 +32,7 @@ Widget.Header = styled.div`
   * {
     margin: 0;
   }
-`
+`;
 
 Widget.Content = styled.div`
   padding: 24px 32px 32px 32px;
@@ -46,6 +46,29 @@ Widget.Content = styled.div`
     list-style: none;
     padding: 0;
   }
-`
+`;
 
-export default Widget
+Widget.Input = styled.input`
+  padding: 10px;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 0 0 0;
+  outline: 0;
+  color: #ffffff;
+  background-color: transparent;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+`;
+
+Widget.Button = styled.button`
+  background-color: ${({ theme }) => theme.colors.secondary};
+  outline: none;
+  border: none;
+  height: 100%;
+  color: #ffffff;
+  border-radius: 3px;
+  padding: 10px;
+  width: 100%;
+  margin-top: 20px;
+`;
+
+export default Widget;
