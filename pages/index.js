@@ -48,7 +48,7 @@ export default function Home() {
 									  setName(event.target.value);
                   }}
                 />
-                <Widget.Button type="submit">
+                <Widget.Button type="submit" disabled={name.length === 0 ? 'disabled' : ''}>
                   Jogar
                 </Widget.Button>
               </form>
