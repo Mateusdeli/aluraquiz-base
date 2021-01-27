@@ -4,7 +4,7 @@ const Widget = styled.div`
   margin-top: 24px;
   margin-bottom: 24px;
   border: .5px solid #B06523;
-  background-color: #1C1814;
+  background-color: #1C181495;
   border-radius: 4px;
   overflow: hidden;
 
@@ -53,6 +53,7 @@ Widget.Input = styled.input`
   width: 100%;
   height: 100%;
   box-shadow: 0 0 0 0;
+  border-radius: 3px;
   outline: 0;
   color: #ffffff;
   background-color: transparent;
@@ -64,6 +65,7 @@ Widget.Button = styled.button`
   outline: none;
   border: none;
   height: 100%;
+  cursor: pointer;
   color: #ffffff;
   border-radius: 3px;
   padding: 10px;
