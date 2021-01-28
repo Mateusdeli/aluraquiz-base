@@ -20,7 +20,7 @@ export default function Home() {
         <QuizContainer>
           <Widget>
             <Widget.Header>
-              <h1>Combat Arms</h1>
+              <h1>Quiz dos Planetas</h1>
             </Widget.Header>
             <Widget.Content>
               <form onSubmit={function (event) {
