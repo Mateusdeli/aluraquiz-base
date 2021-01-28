@@ -1,5 +1,5 @@
 {
-    "bg": "https://cdn.hipwallpaper.com/i/70/70/laPpwI.jpg",
+    "bg": "https://s1.1zoom.me/b5050/210/376711-alexfas01_2560x1440.jpg",
     "title": "Quiz CSS da Alura",
     "description": "Teste os seus conhecimentos sobre CSS e vamos ver quantos layouts você vai deixar de quebrar",
     "questions": [
@@ -31,8 +31,8 @@
     ],
     "theme": {
       "colors": {
-        "primary": "#F08A31",
-        "secondary": "#D67B2B",
+        "primary": "#7142E3",
+        "secondary": "#7142E3",
         "mainBg": "#171B35",
         "contrastText": "#FFFFFF",
         "wrong": "#FF5722",
