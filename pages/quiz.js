@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import db from '../db.json';
@@ -8,6 +8,7 @@ import QuizBackground from '../src/components/QuizBackground';
 import Button from '../src/components/Button';
 import QuizContainer from '../src/components/QuizContainer';
 import LoadingBase from '../src/components/Loading';
+import AlternativesForm from '../src/components/AlternativesForm';
 
 const SCREEN_STATES = {
   QUIZ: 'QUIZ',
@@ -19,8 +20,57 @@ const QUIZ_STATES = {
   WIN: 'WIN',
   LOSE: 'LOSE',
   ANSWERING: 'ANSWERING',
-  FINISH: 'FINISH',
 };
+
+function ResultWidget({ results }) {
+  const router = useRouter();
+  return (
+    <Widget>
+      <Widget.Header>
+        Resultados
+      </Widget.Header>
+      <Widget.Content>
+        <p>
+          Parabéns,
+          {' '}
+          {router.query.name}
+          {' '}
+          <br />
+          <br />
+          <strong>
+            Você fez
+            {' '}
+            {results.reduce((somatoriaAtual, result) => {
+              const isAcerto = result === true;
+              return isAcerto ? somatoriaAtual + 1 : somatoriaAtual;
+            }, 0)}
+            {' '}
+            pontos.
+          </strong>
+        </p>
+        <ul>
+          {results.map((result, index) => (
+            <li
+              key={index}
+            >
+              #Pergunta
+              {' '}
+              {index + 1}
+              {' '}
+              {result === true ? 'Acertou' : 'Errou'}
+            </li>
+          ))}
+        </ul>
+        <Button
+          onClick={() => router.push({ pathname: '/' })}
+          type="submit"
+        >
+          Voltar ao Inicio
+        </Button>
+      </Widget.Content>
+    </Widget>
+  );
+}
 
 function LoadingScreen() {
   return (
@@ -35,33 +85,16 @@ function LoadingScreen() {
   );
 }
 
-function QuestionFinished() {
-  const router = useRouter();
-  return (
-    <Widget>
-      <Widget.Content>
-        <p>Parabéns você acertou todas as questões!</p>
-        <Button
-          onClick={() => router.push({ pathname: '/' })}
-          type="submit"
-        >
-          Voltar ao Inicio
-        </Button>
-      </Widget.Content>
-    </Widget>
-  );
-}
-
 function QuestionWinner({ handleNextQuestion }) {
   return (
     <Widget>
       <Widget.Content>
-        <p>Parabéns você certou a pergunta!</p>
+        <p>Parabéns você acertou a pergunta!</p>
         <Button
           onClick={handleNextQuestion}
           type="submit"
         >
-          Confirmar
+          Proxima
         </Button>
       </Widget.Content>
     </Widget>
@@ -88,7 +121,9 @@ function QuestionWidget({
   handleSubmitQuiz,
   resultQuizState,
   setResponseQuestion,
-  question, questionId,
+  question,
+  hasQuestionSelectioned,
+  questionId,
   totalQuestions,
 }) {
   return (
@@ -113,22 +148,26 @@ function QuestionWidget({
         <h2>{question.title}</h2>
         <p>{question.description}</p>
         {resultQuizState === QUIZ_STATES.ANSWERING && (
-          <form onSubmit={handleSubmitQuiz}>
+          <AlternativesForm onSubmit={handleSubmitQuiz}>
             {question.alternatives.map((alternative, index) => {
               const alternativeId = `alternative__${index}`;
+              const [questionCurrent, setQuestionCurrent] = React.useState(undefined);
+              const result = question.answer == questionCurrent ? 'SUCCESS' : 'ERROR';
               return (
                 <Widget.Topic
                   as="label"
                   key={alternativeId}
+                  data-selected={question.answer == questionCurrent}
+                  data-status = {result}
                   htmlFor={alternativeId}
                 >
                   <Widget.Topic.Alternative
-                    onChange={(event) => {
-                      setResponseQuestion(event.target.value);
+                    onChange={() => {
+                      setQuestionCurrent(index);
+                      setResponseQuestion(index);
                     }}
                     name={questionId}
                     id={alternativeId}
-                    value={index}
                     type="radio"
                   />
                   { alternative }
@@ -137,16 +176,21 @@ function QuestionWidget({
             })}
             <Button
               type="submit"
+              disabled={hasQuestionSelectioned}
             >
               Confirmar
             </Button>
-          </form>
+          </AlternativesForm>
         )}
 
       </Widget.Content>
     </Widget>
   );
 }
+
+ResultWidget.propTypes = {
+  results: PropTypes.array.isRequired,
+};
 
 QuestionWinner.propTypes = {
   handleNextQuestion: PropTypes.func.isRequired,
@@ -157,6 +201,7 @@ QuestionLose.propTypes = {
 };
 
 QuestionWidget.propTypes = {
+  hasQuestionSelectioned: PropTypes.bool.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   question: PropTypes.object.isRequired,
   handleSubmitQuiz: PropTypes.func.isRequired,
@@ -169,12 +214,14 @@ QuestionWidget.propTypes = {
 export default function Quiz() {
   const [screenState, setScreenState] = React.useState(SCREEN_STATES.LOADING);
   const [resultQuizState, setResultQuizState] = React.useState(QUIZ_STATES.ANSWERING);
+  const [results, setResults] = React.useState([]);
   const totalQuestions = db.questions.length;
   const [currentQuestion, setCurrentQuestion] = React.useState(0);
-  const [responseQuestion, setResponseQuestion] = React.useState(0);
+  const [responseQuestion, setResponseQuestion] = React.useState(undefined);
   const [countQuestionAnswered, setCountQuestionAnswered] = React.useState(1);
   const questionIndex = currentQuestion;
   const question = db.questions[questionIndex];
+  const hasQuestionSelectioned = responseQuestion === undefined;
 
   React.useEffect(() => {
     setTimeout(() => {
@@ -182,14 +229,21 @@ export default function Quiz() {
     }, 1 * 1100);
   }, []);
 
+  function addResult(result) {
+    setResults([
+      ...results,
+      result,
+    ]);
+  }
+
   function handleSubmitQuiz(event) {
     event.preventDefault();
-
     if (responseQuestion == question.answer) {
+      addResult(true);
       setResultQuizState(QUIZ_STATES.WIN);
       return;
     }
-
+    addResult(false);
     setResultQuizState(QUIZ_STATES.LOSE);
   }
 
@@ -198,13 +252,13 @@ export default function Quiz() {
   }
 
   function handleNextQuestion() {
-    setCountQuestionAnswered(countQuestionAnswered + 1);
-
     if (countQuestionAnswered === totalQuestions) {
-      setResultQuizState(QUIZ_STATES.FINISH);
+      setResultQuizState(QUIZ_STATES.ANSWERING);
+      setScreenState(SCREEN_STATES.RESULT);
       return;
     }
 
+    setCountQuestionAnswered(countQuestionAnswered + 1);
     setCurrentQuestion(questionIndex + 1);
     setResultQuizState(QUIZ_STATES.ANSWERING);
   }
@@ -219,6 +273,7 @@ export default function Quiz() {
           totalQuestions={totalQuestions}
           resultQuizState={resultQuizState}
           questionId={questionIndex}
+          hasQuestionSelectioned={hasQuestionSelectioned}
           handleNextQuestion={handleNextQuestion}
           setResponseQuestion={setResponseQuestion}
         />
@@ -230,9 +285,9 @@ export default function Quiz() {
         {resultQuizState === QUIZ_STATES.LOSE
         && (<QuestionLose handleResetQuestion={handleResetQuestion} />)}
 
-        {resultQuizState === QUIZ_STATES.FINISH && <QuestionFinished />}
-
         {screenState === SCREEN_STATES.LOADING && <LoadingScreen />}
+
+        {screenState === SCREEN_STATES.RESULT && <ResultWidget results={results} />}
 
       </QuizContainer>
       <GitHubCorner projectUrl="https://github.com/Mateusdeli" />

@@ -13,6 +13,9 @@ const InputBase = styled.input`
   color: #ffffff;
   background-color: transparent;
   border: 1px solid ${({ theme }) => theme.colors.primary};
+  &::placeholder {
+    color: #ffffff;
+  }
 `;
 
 // eslint-disable-next-line react/prop-types

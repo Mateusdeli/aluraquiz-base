@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import db from '../db.json';
 import Widget from '../src/components/Widget';
@@ -20,7 +19,7 @@ export default function Home() {
         <QuizContainer>
           <Widget>
             <Widget.Header>
-              <h1>Quiz dos Planetas</h1>
+              <h1>{db.title}</h1>
             </Widget.Header>
             <Widget.Content>
               <form onSubmit={function (event) {

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import db from '../../../db.json';
-import BounceLoader from 'react-spinners/BounceLoader';
+import RingLoader from 'react-spinners/RingLoader';
 
 const Loading = styled.div`
     height: 100px;
@@ -12,7 +12,7 @@ const Loading = styled.div`
 export default function LoadingBase() {
     return(
         <Loading>
-            <BounceLoader color={db.theme.colors.primary} />
+            <RingLoader color={db.theme.colors.secondary} />
         </Loading>
     );
 };
