@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import db from '../db.json';
-import Widget from '../src/components/Widget';
-import GitHubCorner from '../src/components/GitHubCorner';
-import QuizBackground from '../src/components/QuizBackground';
-import Button from '../src/components/Button';
-import QuizContainer from '../src/components/QuizContainer';
-import LoadingBase from '../src/components/Loading';
-import AlternativesForm from '../src/components/AlternativesForm';
+import Widget from '../../components/Widget';
+import GitHubCorner from '../../components/GitHubCorner';
+import QuizBackground from '../../components/QuizBackground';
+import Button from '../../components/Button';
+import QuizContainer from '../../components/QuizContainer';
+import LoadingBase from '../../components/Loading';
+import AlternativesForm from '../../components/AlternativesForm';
 
 const SCREEN_STATES = {
   QUIZ: 'QUIZ',
@@ -211,16 +210,16 @@ QuestionWidget.propTypes = {
   totalQuestions: PropTypes.number.isRequired,
 };
 
-export default function Quiz() {
+export default function Quiz({ dbQuiz }) {
   const [screenState, setScreenState] = React.useState(SCREEN_STATES.LOADING);
   const [resultQuizState, setResultQuizState] = React.useState(QUIZ_STATES.ANSWERING);
   const [results, setResults] = React.useState([]);
-  const totalQuestions = db.questions.length;
+  const totalQuestions = dbQuiz.questions.length;
   const [currentQuestion, setCurrentQuestion] = React.useState(0);
   const [responseQuestion, setResponseQuestion] = React.useState(undefined);
   const [countQuestionAnswered, setCountQuestionAnswered] = React.useState(1);
   const questionIndex = currentQuestion;
-  const question = db.questions[questionIndex];
+  const question = dbQuiz.questions[questionIndex];
   const hasQuestionSelectioned = responseQuestion === undefined;
 
   React.useEffect(() => {
@@ -264,7 +263,7 @@ export default function Quiz() {
   }
 
   return (
-    <QuizBackground backgroundImage={db.bg}>
+    <QuizBackground backgroundImage={dbQuiz.bg}>
       <QuizContainer>
         {screenState === SCREEN_STATES.QUIZ && (
         <QuestionWidget
